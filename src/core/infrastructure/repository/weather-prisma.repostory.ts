@@ -1,15 +1,33 @@
-import { search } from "src/core/domain/search-dto";
+import { Injectable } from "@nestjs/common";
+import { WeatherByDate, search } from "src/core/domain/dtos";
 import { WeaterEntity } from "src/core/domain/weather.entity";
-import { IWeaterRepository } from "src/core/domain/weather.repository.interface";
+import { IWeatherRepository } from "src/core/domain/weather.repository.interface";
+import { PrismaService } from "src/database/prisma.service";
 
-export class WeatherRepositoryPrisma implements IWeaterRepository {
-  constructor() {}
+@Injectable()
+export class WeatherRepositoryPrisma implements IWeatherRepository {
+  constructor(private readonly prismaService: PrismaService) {}
 
-    insert(data: WeaterEntity): Promise<any> {
-        throw new Error("Method not implemented.");
+    async insert(data: WeaterEntity[]): Promise<string> {
+        try {
+            for (const element of data) {
+                await this.prismaService.weater.create({
+                  data: {
+                    name: element.name,
+                    deg: element.deg,
+                    weather: element.weather,
+                    temp: element.temp,
+                    speed: element.speed
+                  },
+                });
+              }
+            return 'Insert ok'
+        } catch (error) {
+            throw new Error('Error insert data')
+        }
     }
-    
-    get(data: search): Promise<any> {
+
+    get(data: WeatherByDate): Promise<any> {
         return Promise.resolve('ok')
     }
 }

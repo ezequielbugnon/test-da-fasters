@@ -1,7 +1,7 @@
-import { search } from "./search-dto";
+import { WeatherByDate, search } from "./dtos";
 import { WeaterEntity } from "./weather.entity";
 
-export interface IWeaterRepository {
-    insert(data: WeaterEntity): Promise<any | null>;
-    get(data: search): Promise<any | null>;
+export interface IWeatherRepository {
+    insert(data: WeaterEntity[]): Promise<string>;
+    get(data: WeatherByDate): Promise<any | null>;
 }

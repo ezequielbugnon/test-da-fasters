@@ -13,7 +13,7 @@ datasource db {
 model Weater {
   id    Int     @default(autoincrement()) @id
   name String  
-  wheather String
+  weather String
   temp Int
   speed Int
   deg Int

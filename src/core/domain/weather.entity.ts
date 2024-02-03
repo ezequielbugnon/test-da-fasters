@@ -1,7 +1,7 @@
 export interface WeaterEntity {
-    id:string;
+    id?:string;
     name:string;
-    wheather:string;
+    weather:string;
     temp:number;
     speed:number;
     deg:number;
