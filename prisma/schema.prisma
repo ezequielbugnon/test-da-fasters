@@ -3,19 +3,21 @@
 
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-model Weater {
+model Weather {
   id    Int     @default(autoincrement()) @id
   name String  
   weather String
   temp Int
   speed Int
   deg Int
+  createdAt DateTime @default(now())
 }
 

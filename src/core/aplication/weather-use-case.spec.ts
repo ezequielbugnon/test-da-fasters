@@ -1,23 +1,33 @@
 import { WeatherUseCase } from './weather-use-case';
 import { IWeatherRepository } from '../domain/weather.repository.interface';
 import { WeatherByDate, search } from '../domain/dtos';
-import { WeaterEntity } from '../domain/weather.entity';
+import { WeatherEntity } from '../domain/weather.entity';
 
 class RepositoryErr implements IWeatherRepository {
-  insert(data: WeaterEntity[]): Promise<string> {
+  insert(data: WeatherEntity[]): Promise<string> {
     throw new Error('Error');
   }
-  get(data: WeatherByDate): Promise<any> {
+  get(data: WeatherByDate): Promise<WeatherEntity[]> {
     throw new Error('Error');
   }
 }
 
 class Repository implements IWeatherRepository {
-    insert(data: WeaterEntity[]): Promise<string> {
+    insert(data: WeatherEntity[]): Promise<string> {
       return Promise.resolve("Insert ok")
     }
-    get(data: WeatherByDate): Promise<any> {
-      throw new Error('Error');
+    get(data: WeatherByDate): Promise<WeatherEntity[]> {
+      let weather : WeatherEntity[] = [
+        {
+          id: '1',
+          name:'Curitiba',
+          weather:'',
+          temp:200,
+          speed:200,
+          deg:2000,
+        }
+      ]
+      return Promise.resolve(weather)
     }
   }
 
@@ -30,10 +40,12 @@ describe('Weather-use-cases', () => {
 
   beforeEach(async () => {
     repositoryErr = new RepositoryErr();
-    weatherUseCaseErr = new WeatherUseCase(repositoryErr);
+    weatherUseCaseErr = new WeatherUseCase();
+    weatherUseCaseErr.init(repositoryErr)
 
     repository = new Repository()
-    weatherUseCase = new WeatherUseCase(repository)
+    weatherUseCase = new WeatherUseCase()
+    weatherUseCase.init(repository)
   });
 
   describe('Use-case cron job', () => {
@@ -72,9 +84,23 @@ describe('Weather-use-cases', () => {
         await weatherUseCaseErr.getWeather(search);
       } catch (error) {
         expect(error.message).toEqual(
-          'Invalid date format, dates must be in dd/mm/yyyy format',
+          'Invalid date format, dates must be in yyyy-mm-dd format',
         );
       }
+    });
+
+    it('should return ok when serching a specific city weather"', async () => {
+      let search: search = {
+        cities: ['Curitiba'],
+        startDate: '2023-02-04',
+        endDate: '2023-02-04',
+      };
+
+      
+      let response = await weatherUseCase.getWeather(search);
+
+
+      expect(response).toHaveLength(1)
     });
   });
 });

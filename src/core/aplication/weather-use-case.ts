@@ -2,12 +2,17 @@ import axios from 'axios';
 import { WeatherAPI, WeatherByDate, search } from '../domain/dtos';
 import { IWeatherUseCase } from '../domain/weather-use-case.interface';
 import { IWeatherRepository } from '../domain/weather.repository.interface';
-import { WeaterEntity } from '../domain/weather.entity';
+import { WeatherEntity } from '../domain/weather.entity';
 
 export class WeatherUseCase implements IWeatherUseCase {
-  private temperatureData: WeaterEntity[];
-  constructor(private readonly weatherRepository: IWeatherRepository) {
+  private temperatureData: WeatherEntity[];
+  private weatherRepository: IWeatherRepository
+  constructor() {
     this.temperatureData = [];
+  }
+
+  init(weatherRepository: IWeatherRepository){
+    this.weatherRepository = weatherRepository;
   }
 
   async getWeather(data: search): Promise<any> {
@@ -18,11 +23,11 @@ export class WeatherUseCase implements IWeatherUseCase {
       !this.isValidDateFormat(endDate)
     ) {
       throw new Error(
-        'Invalid date format, dates must be in dd/mm/yyyy format',
+        'Invalid date format, dates must be in yyyy-mm-dd format',
       );
     }
 
-    if (cities && cities.length > 0) {
+    if (!cities && cities.length > 0) {
       throw new Error('cities could not empty');
     }
     const parseStartDate = this.parseDate(startDate);
@@ -69,12 +74,11 @@ export class WeatherUseCase implements IWeatherUseCase {
   }
 
   parseDate(dateStr) {
-    const [day, month, year] = dateStr.split('/');
-    return new Date(`${year}-${month}-${day}`);
+    return new Date(dateStr);
   }
 
   isValidDateFormat(dateString) {
-    const regex = /^\d{2}\/\d{2}\/\d{4}$/;
-    return regex.test(dateString);
+    const iso8601Regex = /^\d{4}-\d{2}-\d{2}$/;
+    return iso8601Regex.test(dateString);
   }
 }

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from 'src/database/prisma.service';
 import { WeatherRepositoryPrisma } from './weather-prisma.repostory';
+import { PrismaModule } from 'src/database/prisma.module';
 
 
 @Module({
-  imports: [],
-  providers: [PrismaService, WeatherRepositoryPrisma],
+  imports: [PrismaModule],
+  providers: [WeatherRepositoryPrisma],
   exports:[WeatherRepositoryPrisma]
 })
 export class WeatherPrismaModule {}

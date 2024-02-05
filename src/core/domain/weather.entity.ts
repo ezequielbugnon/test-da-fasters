@@ -1,4 +1,4 @@
-export interface WeaterEntity {
+export interface WeatherEntity {
     id?:string;
     name:string;
     weather:string;
